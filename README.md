@@ -21,6 +21,14 @@ $ wget -qO- https://raw.github.com/binocarlos/vpc/master/bootstrap.sh | sudo bas
 
 ## usage
 
+vpc allows easy whitelisting of ip addresses and ports.
+
+The default is for everything is be disallowed apart from ports:
+
+ * 22
+ * 80
+ * 443
+
 ### vpc add-host <ip>
 
 Add a new host to the whitelist:

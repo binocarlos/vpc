@@ -40,10 +40,35 @@ function listitems()
 
 function create_services()
 {
-  while read line
-  do
-    name=$line
-  done < $VPC_ROOT/ports
+  withdb=$1
+  cat<<EOF > $VPC_ROOT/_ports
+22/tcp
+22/udp
+80/tcp
+443/tcp
+443/udp
+EOF
+
+  if [ ! -z $withdb ]; then
+    while read port
+    do
+      echo "$port/tcp" >> $VPC_ROOT/_ports
+      echo "$port/udp" >> $VPC_ROOT/_ports
+    done < $VPC_ROOT/ports
+  fi
+
+  mv $VPC_ROOT/_ports /etc/firewall/services.conf
+}
+
+function create_hosts()
+{
+  withdb=$1
+
+  if [ ! -z $withdb ]; then
+    cp -f $VPC_ROOT/hosts /etc/firewall/ip-whitelist.conf
+  else
+    echo "" > /etc/firewall/ip-whitelist.conf
+  fi
 }
 
 case "$1" in
@@ -95,8 +120,23 @@ case "$1" in
   reset)
     rm -f $VPC_ROOT/hosts
     rm -f $VPC_ROOT/ports
+    vpc cancel
     ;;
 
+  cancel)
+    create_services
+    create_hosts
+    /etc/init.d/firewall restart
+    /etc/init.d/firewall status
+    ;;
+
+  apply)
+    create_services 1
+    create_hosts 1
+    /etc/init.d/firewall restart
+    /etc/init.d/firewall status
+    ;;
+    
   help)
     echo
     cat<<EOF | sort
