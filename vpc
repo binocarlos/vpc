@@ -38,6 +38,14 @@ function listitems()
   cat $VPC_ROOT/$file
 }
 
+function create_services()
+{
+  while read line
+  do
+    name=$line
+  done < $VPC_ROOT/ports
+}
+
 case "$1" in
 
   add-host)
@@ -53,7 +61,20 @@ case "$1" in
     ;;
 
   add-port)
-    additem $2 ports
+    case "$2" in
+      22)
+        echo "standard port";
+        ;;
+      80)
+        echo "standard port";
+        ;;
+      443)
+        echo "standard port";
+        ;;
+      *)
+        additem $2 ports
+        ;;
+    esac
     ;;
 
   remove-port)
