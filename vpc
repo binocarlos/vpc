@@ -123,6 +123,10 @@ case "$1" in
     vpc cancel
     ;;
 
+  status)
+    /etc/init.d/firewall status
+    ;;
+
   cancel)
     create_services
     create_hosts
@@ -151,6 +155,7 @@ case "$1" in
     apply                                        Apply the firewall rules
     cancel                                       Remove the firewall rules
     reset                                        Delete the firewall rules
+    status                                       Show the iptables status
 EOF
     echo
     ;;
