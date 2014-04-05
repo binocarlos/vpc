@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+export VPC_ROOT=${VPC_ROOT:="/var/lib/vpc"}
+
+function additem()
+{
+  item=$1
+  file=$2
+  touch $VPC_ROOT/$file
+  if [ ! -z $item ]; then
+    if grep -Fxq "$item" $VPC_ROOT/$file
+    then
+      echo $item
+    else
+      echo $item >> $VPC_ROOT/$file
+      echo $item
+    fi
+  fi
+}
+
+function removeitem()
+{
+  item=$1
+  file=$2
+  if [ ! -z $item ]; then
+    if grep -Fxq "$item" $VPC_ROOT/$file
+    then
+      sed -i /$item/d $VPC_ROOT/$file
+    fi
+  fi
+}
+
+function listitems()
+{
+  file=$1
+  touch $VPC_ROOT/$file
+  cat $VPC_ROOT/$file
+}
+
+case "$1" in
+
+  add-host)
+    additem $2 hosts
+    ;;
+
+  remove-host)
+    removeitem $2 hosts
+    ;;
+
+  hosts)
+    listitems hosts
+    ;;
+
+  add-port)
+    additem $2 ports
+    ;;
+
+  remove-port)
+    removeitem $2 ports
+    ;;
+
+  ports)
+    listitems ports
+    ;;
+
+  ls)
+    echo "[hosts]"
+    vpc hosts
+    echo "[ports]"
+    vpc ports
+    ;;
+
+  reset)
+    rm -f $VPC_ROOT/hosts
+    rm -f $VPC_ROOT/ports
+    ;;
+
+  help)
+    echo
+    cat<<EOF | sort
+    help                                         Print the list of commands
+    add-host <ip>                                Expose service ports onto 127.0.0.1
+    remove-host <ip>                             Expose service ports onto 127.0.0.1
+    hosts                                        List the current hosts
+    add-port <port>                              Expose service ports onto 127.0.0.1
+    remove-port <port>                           Expose service ports onto 127.0.0.1
+    ports                                        List the current ports
+    ls                                           Show the current firewall rules
+    apply                                        Apply the firewall rules
+    cancel                                       Remove the firewall rules
+    reset                                        Delete the firewall rules
+EOF
+    echo
+    ;;
+
+  *)
+    vpc help
+    ;;
+
+esac
