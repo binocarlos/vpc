@@ -15,7 +15,7 @@ apt-get update
 apt-get install -y git make
 
 cd ~ && test -d vpc || git clone $VPC_REPO
-cd viking
+cd vpc
 git fetch origin
 
 if [[ -n $VPC_BRANCH ]]; then
