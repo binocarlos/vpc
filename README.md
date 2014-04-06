@@ -11,7 +11,7 @@ I didn't want other droplets to be able to connect to the services on my droplet
 
 I figured to use etcd and configure the whitelist from watching a path.
 
-vpc is the api to do this - it uses [iptables-boilerplate](https://github.com/bmaeser/iptables-boilerplate) with modifications to allow docker to run OK.
+vpc is an api to do this - it uses [iptables-boilerplate](https://github.com/bmaeser/iptables-boilerplate).
 
 ## installation
 
