@@ -1,7 +1,9 @@
 vpc
 ===
 
-Virtual Private Cluster - configure an iptables whitelist for a private network within a cloud providers data center.
+Virtual Private Cluster - configure an iptables whitelist for a private network of docker hosts.
+
+![vpc network](docs/network.png)
 
 ## Why?
 
@@ -9,9 +11,9 @@ Beacuse I wanted my own little network of machines inside Digital Ocean all comm
 
 I didn't want other droplets to be able to connect to the services on my droplets.
 
-I figured to use etcd and configure the whitelist from watching a path.
+I did want to still talk to docker containers from my other droplets.
 
-vpc is an api to do this - it uses [iptables-boilerplate](https://github.com/bmaeser/iptables-boilerplate).
+vpc is an api to do this - it is based on [iptables-boilerplate](https://github.com/bmaeser/iptables-boilerplate) with an api to manage hosts and ports and with modifications to play nice with docker.
 
 ## installation
 

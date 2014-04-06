@@ -120,19 +120,16 @@ case "$1" in
     ;;
 
   reset)
+    vpc stop
+    echo "resetting firewall"
     rm -f $VPC_ROOT/hosts
     rm -f $VPC_ROOT/ports
-    vpc cancel
+    create_services
+    create_hosts
+    echo "firewall reset"
     ;;
 
   status)
-    /etc/init.d/firewall status
-    ;;
-
-  cancel)
-    create_services
-    create_hosts
-    /etc/init.d/firewall restart
     /etc/init.d/firewall status
     ;;
 
