@@ -117,6 +117,22 @@ Reset the firewall (warning - deletes data):
 $ sudo vpc reset
 ```
 
+### vpc start
+
+start the firewall
+
+```bash
+$ sudo vpc start
+```
+
+### vpc stop
+
+stop the firewall
+
+```bash
+$ sudo vpc stop
+```
+
 ## license
 
 MIT
