@@ -36,7 +36,7 @@ The default is for everything is be disallowed apart from ports:
 Add a new host to the whitelist:
 
 ```bash
-$ sudo vpc host add-host 10.12.13.14
+$ sudo vpc add-host 10.12.13.14
 ```
 
 ### vpc remove-host <ip>
@@ -44,7 +44,7 @@ $ sudo vpc host add-host 10.12.13.14
 Remove a host from the whitelist:
 
 ```bash
-$ sudo vpc host remove-host 10.12.13.14
+$ sudo vpc remove-host 10.12.13.14
 ```
 
 ### vpc hosts
@@ -52,7 +52,7 @@ $ sudo vpc host remove-host 10.12.13.14
 List the hosts in the whitelist:
 
 ```bash
-$ sudo vpc host ls
+$ sudo vpc hosts
 ```
 
 ### vpc add-port <port>
@@ -60,7 +60,7 @@ $ sudo vpc host ls
 Add a port to the whitelist:
 
 ```bash
-$ sudo vpc port add 443
+$ sudo vpc add-port 443
 ```
 
 ### vpc remove-port <port>
@@ -68,7 +68,7 @@ $ sudo vpc port add 443
 Remove a port from the whitelist:
 
 ```bash
-$ sudo vpc port remove 443
+$ sudo vpc remove-port 443
 ```
 
 ### vpc ports
@@ -76,7 +76,7 @@ $ sudo vpc port remove 443
 List the ports in the whitelist:
 
 ```bash
-$ sudo vpc port ls
+$ sudo vpc ports
 ```
 
 ### vpc ls
@@ -92,7 +92,7 @@ $ sudo vpc ls
 Show the current status of the firewall:
 
 ```bash
-$ sudo vpc ls
+$ sudo vpc status
 ```
 
 ### vpc apply
