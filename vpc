@@ -147,6 +147,11 @@ case "$1" in
   start)
     /etc/init.d/firewall start
     ;;
+
+  restart)
+    /etc/init.d/firewall stop
+    /etc/init.d/firewall start
+    ;;
     
   help)
     echo

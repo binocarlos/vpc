@@ -77,7 +77,7 @@ case "$1" in
             echo 1 > /proc/sys/net/ipv4/ip_forward
         else
             ## drop IPv4 forwarding
-            $IPTABLES -P FORWARD DROP            
+            $IPTABLES -P FORWARD DROP
             ## disable IPv4 forwarding ( ! overwrites sysctl settings ! )
             echo 0 > /proc/sys/net/ipv4/ip_forward
             echo 0 > /proc/sys/net/ipv4/conf/all/forwarding
@@ -90,7 +90,6 @@ case "$1" in
 
         ## allow anything on loopback
         $IPTABLES -A INPUT -i lo -j ACCEPT
-        $IPTABLES -A FORWARD -i lo -j ACCEPT
         $IPTABLES -A OUTPUT -o lo -j ACCEPT
 
         ## allow ICMP
@@ -98,7 +97,6 @@ case "$1" in
 
         ## allow all packets that already have a connection
         $IPTABLES -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-        $IPTABLES -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
         $IPTABLES -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
         ##################################################################
@@ -107,12 +105,13 @@ case "$1" in
 
         DOCKERIP=$(ifconfig docker0 | grep "inet addr" | sed 's/inet addr://' | awk '{ print $1 }' || "127.0.0.1")
         DOCKERIP=$(echo $DOCKERIP | sed 's/\.\d+\.\d+$/.0.0/')
+        DOCKERRANGE="$DOCKERIP/16"
 
         ## ACCEPT ALL CONNECTIONS FROM WHITELIST FILE /etc/firewall/ip-whitelist.conf
         for IP in `cat /etc/firewall/ip-whitelist.conf | sed 's/\s/_/g' | grep -v "^#"`; do
             $IPTABLES -A INPUT -s $IP -m state --state NEW -j ACCEPT
 
-            ## add each host in our cluster to the docker forward
+            ## allow each host in our cluster through the forward filter
             $IPTABLES -A FORWARD -s $IP -m state --state NEW -j ACCEPT
         done;
 
@@ -142,27 +141,24 @@ case "$1" in
                 if [ ${#SERVICES[@]} == 2 ]; then
                     IP=${SERVICES[1]}
                 fi;
+
+                ## allow the whitelisted port on the input filter
                 $IPTABLES -A INPUT -p $PROTO -s $IP --dport $PORT -m state --state NEW -j ACCEPT
 
-                ## allow forwarded packets destined for docker on the public exposed ports
-                ## this is for core services that expose their ports the same
-                ## e.g. etcd:4001 -> 4001
-                
-                $IPTABLES -A FORWARD -p $PROTO -d $DOCKERIP/16 --dport $PORT -m state --state NEW -j ACCEPT
-
-                ## allow packets from the outside world to travel into docker
+                ## allow the whitelisted port on the forward filter
+                $IPTABLES -A FORWARD -p $PROTO -s $IP --dport $PORT -m state --state NEW -j ACCEPT
                 
                 done <<< "$line"
         done;
 
-        ## allow communication between docker containers
-        #$IPTABLES -A FORWARD -i !docker0 -o !docker0 -m state --state NEW -j ACCEPT
+        ## allow anything that came from the docker containers
+        $IPTABLES -A FORWARD -s $DOCKERRANGE -m state --state NEW -j ACCEPT
+        $IPTABLES -A INPUT -s $DOCKERRANGE -m state --state NEW -j ACCEPT
 
-        ## allow connections originating from docker containers to be forwarded to the outside
-        $IPTABLES -A FORWARD -s $DOCKERIP/16 -m state --state NEW -j ACCEPT
+        #$IPTABLES -A FORWARD -s $DOCKERRANGE -d $DOCKERRANGE -m state --state NEW -j ACCEPT
 
-        ## stop anything else being forwarded
-        $IPTABLES -A FORWARD -m state --state NEW -j DROP
+        ## block any other attempt to contact docker containers from the outside
+        $IPTABLES -A FORWARD -d $DOCKERRANGE -m state --state NEW -j REJECT
 
         #################################################################
         # drop and log invalid packages
