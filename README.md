@@ -25,6 +25,26 @@ $ wget -qO- https://raw.github.com/binocarlos/vpc/master/bootstrap.sh | sudo bas
 
 vpc allows easy whitelisting of ip addresses and ports.
 
+```bash
+$ vpc add-host 192.168.8.120
+$ vpc add-host 192.168.8.121
+$ vpc add-host 192.168.8.122
+$ vpc add-port 1978
+$ vpc apply
+```
+
+you can see the entries:
+
+```bash
+$ vpc ls
+```
+
+and you can see how it affects iptables:
+
+```bash
+$ vpc status
+```
+
 The default is for everything is be disallowed apart from ports:
 
  * 22
