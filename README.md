@@ -3,6 +3,8 @@ vpc
 
 Virtual Private Cluster - configure an iptables whitelist for a private network of docker hosts.
 
+Basically a poor mans [Virtual Private Cloud](http://en.wikipedia.org/wiki/Virtual_private_cloud)
+
 ![vpc network](docs/network.png)
 
 ## Why?
