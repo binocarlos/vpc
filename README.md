@@ -23,6 +23,8 @@ vpc is an api to do this - it is based on [iptables-boilerplate](https://github.
 $ wget -qO- https://raw.github.com/binocarlos/vpc/master/bootstrap.sh | sudo bash
 ```
 
+NOTE - until I have time to debug - this needs running twice
+
 ## usage
 
 vpc allows easy whitelisting of ip addresses and ports.
